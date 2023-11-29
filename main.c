@@ -83,7 +83,15 @@ int main(int argc, char **argv, char *envp[])
 			}
 			execve(cmd[0], cmd, envp);
 		}
+		free(cmd);
 		i_cmd ++;
 	}
+	int i = 0;
+	while (input.path[i])
+	{
+		printf("free: %s\n",input.path[i]);
+		i++;
+	}
+	close_pipe(&pipefd[0], i_last);
 	return (0);
 }
