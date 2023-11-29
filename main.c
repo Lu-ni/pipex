@@ -11,6 +11,18 @@
 #include <fcntl.h>
 #include <stdio.h>
 
+void close_pipe(int pipefd[10][2], int i_last)
+{
+	int i;
+	i=0;
+	while (i<i_last)
+	{
+		close(pipefd[i][0]);
+		close(pipefd[i][1]);
+		i++;
+	}
+}
+
 int main(int argc, char **argv)
 {
 	int pipefd[10][2];
@@ -25,15 +37,17 @@ int main(int argc, char **argv)
 
 	parser(argc, argv, &input);
 
+	while ( i_cmd < i_last)
+	{
+		if (pipe(pipefd[i_cmd]) == -1) {
+			perror("pipe");
+			exit(EXIT_FAILURE);
+		}
+		i_cmd++;
+	}
+	i_cmd = 0;
 	while(i_cmd <= i_last)
 	{
-		if ( i_cmd != i_last)
-		{
-			if (pipe(pipefd[i_cmd]) == -1) {
-				perror("pipe");
-				exit(EXIT_FAILURE);
-			}
-		}
 		cmd = ft_split(argv[i_cmd + 2], ' ');
 		pid = fork();
 		if (pid == -1)
@@ -46,25 +60,21 @@ int main(int argc, char **argv)
 			if (i_cmd == i_first)
 			{
 				dup2(open(input.infile, O_RDONLY), STDIN_FILENO);
-				close(pipefd[i_cmd][0]);
 				dup2(pipefd[i_cmd][1], STDOUT_FILENO);
-				close(pipefd[i_cmd][1]);
-				execve(cmd[0], cmd, NULL);
+				close_pipe(&pipefd[0], i_last);
 			}
-			if (i_cmd == i_last)
+			else if (i_cmd == i_last)
 			{
 				dup2(open(input.outfile, O_CREAT|O_WRONLY|O_TRUNC, S_IRUSR|S_IWUSR), STDOUT_FILENO);
-				close(pipefd[i_cmd - 1][1]);
 				dup2(pipefd[i_cmd - 1][0], STDIN_FILENO);
-				//close(pipefd[i_cmd - 1][0]);
-				execve(cmd[0], cmd, NULL);
+				close_pipe(&pipefd[0], i_last);
 			}
-			dup2(pipefd[i_cmd][1], STDOUT_FILENO);
-			//close(pipefd[i_cmd][0]);
-			//close(pipefd[i_cmd][1]);
-			close(pipefd[i_cmd - 1][1]);
-			dup2(pipefd[i_cmd - 1][0], STDIN_FILENO);
-			//close(pipefd[i_cmd - 1][0]);
+			else
+			{
+				dup2(pipefd[i_cmd][1], STDOUT_FILENO);
+				dup2(pipefd[i_cmd - 1][0], STDIN_FILENO);
+				close_pipe(&pipefd[0], i_last);
+			}
 			execve(cmd[0], cmd, NULL);
 		}
 		i_cmd ++;
