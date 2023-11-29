@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <sys/_types/_pid_t.h>
+#include <sys/_types/_s_ifmt.h>
 #include <sys/fcntl.h>
 #include <sys/unistd.h>
 #include <unistd.h>
@@ -10,8 +11,6 @@
 
 int main(int argc, char **argv)
 {
-	//t_input args;
-	//./pipex ola "/bin/ls -al" "/usr/bin/grep lib" ola
 	int pipefd[2];
 	t_input input;
 
@@ -37,11 +36,6 @@ int main(int argc, char **argv)
 	}
 
 	pid_t pid2 = fork();
-	int pipefd2[2];
-	if (pipe(pipefd2) == -1) {
-        perror("pipe");
-        exit(EXIT_FAILURE);
-    }
     if (pid2 == -1)
 	{
         perror("fork");
@@ -49,7 +43,7 @@ int main(int argc, char **argv)
     }
 	if (pid2 == 0)
 	{
-		dup2(open(input.outfile, O_CREAT|O_WRONLY|O_TRUNC), STDOUT_FILENO);
+		dup2(open(input.outfile, O_CREAT|O_WRONLY|O_TRUNC, S_IRUSR|S_IWUSR), STDOUT_FILENO);
 		close(pipefd[1]);
 		dup2(pipefd[0], STDIN_FILENO);
 		close(pipefd[0]);

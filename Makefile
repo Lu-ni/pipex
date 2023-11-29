@@ -1,22 +1,17 @@
-NAME = libftprintf.a
+NAME = pipex
 CC = cc
-CFLAGS = -Wextra -Werror -Wall -c
-SRC = ft_printf.c hexadecimal_tools.c ft_u_itoa.c ft_print_pucxx.c
+CFLAGS = -Wextra -Werror -Wall
+SRC = main.c parser.c
 OBJ = $(SRC:.c=.o)
 LIBFT = libft/libft.a
 
 all: $(NAME)
 
 $(NAME): $(OBJ) $(LIBFT)
-	# Extract object files from libft.a
-	ar -x $(LIBFT)
-	# Create libftprintf.a including those object files
-	ar -rcs $(NAME) $(OBJ) *.o
-	# Optionally, remove extracted object files to clean up
-	rm -f *.o "__.SYMDEF SORTED"
+	$(CC) $(CFLAGS) $(OBJ) -L. -lft -o $(NAME)
 
 $(OBJ): $(SRC)
-	$(CC) $(CFLAGS) $(SRC)
+	$(CC) $(CFLAGS) -c $(SRC)
 
 $(LIBFT):
 	cd libft && make bonus && cd ../
