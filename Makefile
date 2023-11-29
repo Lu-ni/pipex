@@ -1,7 +1,7 @@
 NAME = pipex
 CC = cc
 CFLAGS = -Wextra -Werror -Wall
-SRC = main.c parser.c
+SRC = main.c parser.c cmd_utils.c
 OBJ = $(SRC:.c=.o)
 LIBFT = libft/libft.a
 

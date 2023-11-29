@@ -8,4 +8,5 @@ typedef struct s_input
 } t_input;
 int parser(int argc,char **argv, t_input *args);
 char **get_path(char *env[]);
+char **get_cmd(char *raw, char **path);
 #endif

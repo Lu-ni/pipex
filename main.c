@@ -34,11 +34,7 @@ int main(int argc, char **argv, char *envp[])
 	i_cmd = 0;
 	int i_first = 0;
 	int i_last = argc - 4;
-	////////////
 	input.path = get_path(envp);
-
-	printf("%s\n",input.path[1]);
-	/////////////////
 	parser(argc, argv, &input);
 
 	while ( i_cmd < i_last)
@@ -52,7 +48,7 @@ int main(int argc, char **argv, char *envp[])
 	i_cmd = 0;
 	while(i_cmd <= i_last)
 	{
-		cmd = ft_split(argv[i_cmd + 2], ' ');
+		cmd = get_cmd(argv[i_cmd + 2],input.path);
 		pid = fork();
 		if (pid == -1)
 		{
