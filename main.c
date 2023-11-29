@@ -35,7 +35,8 @@ int main(int argc, char **argv, char *envp[])
 	int i_first = 0;
 	int i_last = argc - 4;
 	input.path = get_path(envp);
-	parser(argc, argv, &input);
+	if(parser(argc, argv, &input))
+		exit(EXIT_FAILURE);
 
 	while ( i_cmd < i_last)
 	{
@@ -50,7 +51,10 @@ int main(int argc, char **argv, char *envp[])
 	{
 		cmd = get_cmd(argv[i_cmd + 2],input.path);
 		if (!cmd)
-			return 0; //do something if cmd is wrong
+		{
+			perror("command not found");
+			exit(EXIT_FAILURE);
+		}
 		pid = fork();
 		if (pid == -1)
 		{
@@ -77,7 +81,7 @@ int main(int argc, char **argv, char *envp[])
 				dup2(pipefd[i_cmd - 1][0], STDIN_FILENO);
 				close_pipe(&pipefd[0], i_last);
 			}
-			execve(cmd[0], cmd, NULL);
+			execve(cmd[0], cmd, envp);
 		}
 		i_cmd ++;
 	}
