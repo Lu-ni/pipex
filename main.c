@@ -23,7 +23,7 @@ void close_pipe(int pipefd[10][2], int i_last)
 	}
 }
 
-int main(int argc, char **argv)
+int main(int argc, char **argv, char *envp[])
 {
 	int pipefd[10][2];
 	t_input input;
@@ -34,7 +34,11 @@ int main(int argc, char **argv)
 	i_cmd = 0;
 	int i_first = 0;
 	int i_last = argc - 4;
+	////////////
+	input.path = get_path(envp);
 
+	printf("%s\n",input.path[1]);
+	/////////////////
 	parser(argc, argv, &input);
 
 	while ( i_cmd < i_last)
