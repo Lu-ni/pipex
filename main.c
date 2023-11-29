@@ -49,6 +49,8 @@ int main(int argc, char **argv, char *envp[])
 	while(i_cmd <= i_last)
 	{
 		cmd = get_cmd(argv[i_cmd + 2],input.path);
+		if (!cmd)
+			return 0; //do something if cmd is wrong
 		pid = fork();
 		if (pid == -1)
 		{
