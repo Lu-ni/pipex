@@ -69,11 +69,12 @@ int main(int argc, char **argv, char *envp[])
 				if (fd < 0)
 				{
 					error("no such file or directory: ", input.infile);
-					exit(EXIT_FAILURE);
 				}
-
-				dup2(fd, STDIN_FILENO);
-				dup2(pipefd[i_cmd][1], STDOUT_FILENO);
+				else
+				{
+					dup2(fd, STDIN_FILENO);
+					dup2(pipefd[i_cmd][1], STDOUT_FILENO);
+				}
 				close_pipe(&pipefd[0], i_last);
 			}
 			else if (i_cmd == i_last)
@@ -102,5 +103,6 @@ int main(int argc, char **argv, char *envp[])
 		free(input.path[i++]);
 	free(input.path);
 	close_pipe(&pipefd[0], i_last);
+	printf("testtttt\n");
 	return (0);
 }
