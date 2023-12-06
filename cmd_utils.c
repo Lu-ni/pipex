@@ -21,5 +21,6 @@ char **get_cmd(char *raw, char **path)
 		free(tmp);
 		path++;
 	}
+	//free everything from the split()
 	return NULL;
 }

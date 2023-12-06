@@ -65,7 +65,14 @@ int main(int argc, char **argv, char *envp[])
 		{
 			if (i_cmd == i_first)
 			{
-				dup2(open(input.infile, O_RDONLY), STDIN_FILENO);
+				int fd = open(input.infile, O_RDONLY);
+				if (fd < 0)
+				{
+					error("no such file or directory: ", input.infile);
+					exit(EXIT_FAILURE);
+				}
+
+				dup2(fd, STDIN_FILENO);
 				dup2(pipefd[i_cmd][1], STDOUT_FILENO);
 				close_pipe(&pipefd[0], i_last);
 			}
@@ -83,15 +90,17 @@ int main(int argc, char **argv, char *envp[])
 			}
 			execve(cmd[0], cmd, envp);
 		}
+		int i = 0;
+		while(cmd[i])
+			free(cmd[i++]);
 		free(cmd);
 		i_cmd ++;
 	}
 	int i = 0;
-	while (input.path[i])
-	{
-		printf("free: %s\n",input.path[i]);
-		i++;
-	}
+	i = 0;
+	while(input.path[i])
+		free(input.path[i++]);
+	free(input.path);
 	close_pipe(&pipefd[0], i_last);
 	return (0);
 }
