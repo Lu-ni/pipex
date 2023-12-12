@@ -38,15 +38,17 @@ char **get_cmd(char *raw, char **path)
 	return NULL;
 }
 
-void cmd_first(t_input *input, int pipefd[10][2], int i_cmd)
+void cmd_first(t_input *input, int pipefd[10][2])
 {
+	int fd;
+
 	if (!input->cmd)
 	{
-		perror("command not found");
+		error("command not found", NULL);
 		close_pipe(&pipefd[0], input);
 		exit(EXIT_FAILURE);
 	}
-	int fd = open(input->infile, O_RDONLY);
+	fd = open(input->infile, O_RDONLY);
 	if (fd < 0)
 	{
 		error("no such file or directory: ", input->infile);
@@ -54,34 +56,42 @@ void cmd_first(t_input *input, int pipefd[10][2], int i_cmd)
 	else
 	{
 		dup2(fd, STDIN_FILENO);
-		dup2(pipefd[i_cmd][1], STDOUT_FILENO);
+		dup2(pipefd[input->i_cmd][1], STDOUT_FILENO);
 	}
 	close_pipe(&pipefd[0], input);
 }
 
-void cmd_mid(t_input *input, int pipefd[10][2],int i_cmd)
+void cmd_last(t_input *input, int pipefd[10][2])
 {
 	if (!input->cmd)
 	{
-		perror("command not found");
-		close_pipe(&pipefd[0], input);
-		exit(EXIT_FAILURE);
-	}
-	dup2(pipefd[i_cmd][1], STDOUT_FILENO);
-	dup2(pipefd[i_cmd - 1][0], STDIN_FILENO);
-	close_pipe(&pipefd[0], input);
-}
-
-void cmd_last(t_input *input, int pipefd[10][2],int i_cmd)
-{
-	if (!input->cmd)
-	{
-		perror("command not found");
+		error("command not found", NULL);
 		close_pipe(&pipefd[0], input);
 		open(input->outfile, O_CREAT|O_WRONLY|O_TRUNC, S_IRUSR|S_IWUSR);
 		exit(EXIT_FAILURE);
 	}
 	dup2(open(input->outfile, O_CREAT|O_WRONLY|O_TRUNC, S_IRUSR|S_IWUSR), STDOUT_FILENO);
-	dup2(pipefd[i_cmd - 1][0], STDIN_FILENO);
+	dup2(pipefd[input->i_cmd - 1][0], STDIN_FILENO);
 	close_pipe(&pipefd[0], input);
+}
+
+void run_cmd(t_input *input, int pipefd[10][2],char *envp[])
+{
+	if (input->i_cmd == 0)
+		cmd_first(input, pipefd);
+	else if (input->i_cmd == input->i_last)
+		cmd_last(input, pipefd);
+	else
+	{
+		if (!input->cmd)
+		{
+			error("command not found", NULL);
+			close_pipe(&pipefd[0], input);
+			exit(EXIT_FAILURE);
+		}
+		dup2(pipefd[input->i_cmd][1], STDOUT_FILENO);
+		dup2(pipefd[input->i_cmd - 1][0], STDIN_FILENO);
+		close_pipe(&pipefd[0], input);
+	}
+	execve(input->cmd[0], input->cmd, envp);
 }

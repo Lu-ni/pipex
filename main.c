@@ -23,55 +23,53 @@ void close_pipe(int pipefd[10][2], t_input *input)
 	}
 }
 
+void init(int argc, char **argv, t_input *input, int pipefd[10][2])
+{
+	if(parser(argc, argv, input))
+		exit(EXIT_FAILURE);
+	while (input->i_cmd < input->i_last)
+	{
+		if (pipe(pipefd[input->i_cmd]) == -1)
+		{
+			error("pipe", NULL);
+			exit(EXIT_FAILURE);
+		}
+		input->i_cmd++;
+	}
+	input->i_cmd = 0;
+}
+
+int open_pid()
+{
+	int pid;
+
+	pid = fork();
+	if (pid == -1)
+	{
+		error("fork", NULL);
+		exit(EXIT_FAILURE);
+	}
+	return (pid);
+}
+
 int main(int argc, char **argv, char *envp[])
 {
 	int pipefd[10][2];
-	t_input input;
-	int i_cmd;
+	t_input input = {.i_cmd = 0, .i_last = argc - 4, .path = get_path(envp)};
 	pid_t pid;
+	int i;
 
-	i_cmd = 0;
-	int i_first = 0;
-	input.i_last = argc - 4;
-	input.path = get_path(envp);
-	if(parser(argc, argv, &input))
-		exit(EXIT_FAILURE);
-
-	while (i_cmd < input.i_last)
+	init(argc, argv, &input, pipefd);
+	while(input.i_cmd <= input.i_last)
 	{
-		if (pipe(pipefd[i_cmd]) == -1)
-		{
-			perror("pipe");
-			exit(EXIT_FAILURE);
-		}
-		i_cmd++;
-	}
-	i_cmd = 0;
-	while(i_cmd <= input.i_last)
-	{
-		input.cmd = get_cmd(argv[i_cmd + 2],input.path);
-		pid = fork();
-		if (pid == -1)
-		{
-			perror("fork");
-			exit(EXIT_FAILURE);
-		}
+		input.cmd = get_cmd(argv[input.i_cmd + 2],input.path);
+		pid = open_pid();
 		if (pid == 0)
-		{
-			if (i_cmd == i_first)
-				cmd_first(&input, pipefd, i_cmd);
-			else if (i_cmd == input.i_last)
-				cmd_last(&input, pipefd, i_cmd);
-			else
-				cmd_mid(&input, pipefd, i_cmd);
-			execve(input.cmd[0], input.cmd, envp);
-		}
+			run_cmd(&input, pipefd,envp);
 		if(input.cmd)
 			free_cmd(input.cmd);
-		i_cmd ++;
+		input.i_cmd ++;
 	}
-	// freeing and closing pipes
-	int i = 0;
 	i = 0;
 	while(input.path[i])
 		free(input.path[i++]);

@@ -12,7 +12,7 @@ void error(char *msg, char *subject)
 	str[0] = '\0';
 	while (*msg)
 		*actual++ = *msg++;
-	while (*subject)
+	while (subject && *subject)
 		*actual++ = *subject++;
 	*actual++ = '\n';
 	*actual = '\0';
