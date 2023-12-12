@@ -34,19 +34,18 @@ char **get_cmd(char *raw, char **path)
 		free(tmp);
 		path++;
 	}
-	//free everything from the split()
 	free_cmd(cmd);	
 	return NULL;
 }
 
 void cmd_first(t_input *input, int pipefd[10][2], int i_cmd)
 {
-			if (!input->cmd)
-			{
-				perror("command not found");
-				close_pipe(&pipefd[0], input);
-				exit(EXIT_FAILURE);
-			}
+	if (!input->cmd)
+	{
+		perror("command not found");
+		close_pipe(&pipefd[0], input);
+		exit(EXIT_FAILURE);
+	}
 	int fd = open(input->infile, O_RDONLY);
 	if (fd < 0)
 	{
@@ -62,12 +61,12 @@ void cmd_first(t_input *input, int pipefd[10][2], int i_cmd)
 
 void cmd_mid(t_input *input, int pipefd[10][2],int i_cmd)
 {
-			if (!input->cmd)
-			{
-				perror("command not found");
-				close_pipe(&pipefd[0], input);
-				exit(EXIT_FAILURE);
-			}
+	if (!input->cmd)
+	{
+		perror("command not found");
+		close_pipe(&pipefd[0], input);
+		exit(EXIT_FAILURE);
+	}
 	dup2(pipefd[i_cmd][1], STDOUT_FILENO);
 	dup2(pipefd[i_cmd - 1][0], STDIN_FILENO);
 	close_pipe(&pipefd[0], input);
@@ -75,12 +74,13 @@ void cmd_mid(t_input *input, int pipefd[10][2],int i_cmd)
 
 void cmd_last(t_input *input, int pipefd[10][2],int i_cmd)
 {
-			if (!input->cmd)
-			{
-				perror("command not found");
-				close_pipe(&pipefd[0], input);
-				exit(EXIT_FAILURE);
-			}
+	if (!input->cmd)
+	{
+		perror("command not found");
+		close_pipe(&pipefd[0], input);
+		open(input->outfile, O_CREAT|O_WRONLY|O_TRUNC, S_IRUSR|S_IWUSR);
+		exit(EXIT_FAILURE);
+	}
 	dup2(open(input->outfile, O_CREAT|O_WRONLY|O_TRUNC, S_IRUSR|S_IWUSR), STDOUT_FILENO);
 	dup2(pipefd[i_cmd - 1][0], STDIN_FILENO);
 	close_pipe(&pipefd[0], input);
