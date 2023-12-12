@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: lnicolli <marvin@42lausanne.ch>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/12/12 18:03:35 by lnicolli          #+#    #+#             */
+/*   Updated: 2023/12/12 18:05:27 by lnicolli         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "libft/libft.h"
 #include "pipex.h"
 #include <fcntl.h>
@@ -55,10 +67,13 @@ int	open_pid(void)
 int	main(int argc, char **argv, char *envp[])
 {
 	int		pipefd[10][2];
-	t_input	input = {.i_cmd = 0, .i_last = argc - 4, .path = get_path(envp)};
+	t_input	input;
 	pid_t	pid;
 	int		i;
 
+	input.i_cmd = 0;
+	input.i_last = argc - 4;
+	input.path = get_path(envp);
 	init(argc, argv, &input, pipefd);
 	while (input.i_cmd <= input.i_last)
 	{

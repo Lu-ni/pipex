@@ -1,33 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   error.c                                            :+:      :+:    :+:   */
+/*   ft_lstsize.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lnicolli <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/12/12 18:05:44 by lnicolli          #+#    #+#             */
-/*   Updated: 2023/12/12 18:05:46 by lnicolli         ###   ########.fr       */
+/*   Created: 2023/10/30 12:28:39 by lnicolli          #+#    #+#             */
+/*   Updated: 2023/10/30 13:05:31 by lnicolli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft/libft.h"
-#include <unistd.h>
+#include "libft.h"
 
-void	error(char *msg, char *subject)
+int	ft_lstsize(t_list *lst)
 {
-	char	str[1000];
-	char	*actual;
-	int		i;
+	int	counter;
 
-	i = 0;
-	actual = str;
-	str[0] = '\0';
-	while (*msg)
-		*actual++ = *msg++;
-	while (subject && *subject)
-		*actual++ = *subject++;
-	*actual++ = '\n';
-	*actual = '\0';
-	while (str[i])
-		write(1, &str[i++], 1);
+	counter = 1;
+	if (!lst)
+		return (0);
+	while (lst->next != (t_list *)0)
+	{
+		lst = lst->next;
+		counter++;
+	}
+	return (counter);
 }

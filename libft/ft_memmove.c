@@ -1,33 +1,35 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   error.c                                            :+:      :+:    :+:   */
+/*   ft_memmove.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lnicolli <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/12/12 18:05:44 by lnicolli          #+#    #+#             */
-/*   Updated: 2023/12/12 18:05:46 by lnicolli         ###   ########.fr       */
+/*   Created: 2023/10/24 17:48:05 by lnicolli          #+#    #+#             */
+/*   Updated: 2023/10/24 20:05:28 by lnicolli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft/libft.h"
-#include <unistd.h>
+#include "libft.h"
 
-void	error(char *msg, char *subject)
+void	*ft_memmove(void *dst, const void *src, size_t len)
 {
-	char	str[1000];
-	char	*actual;
-	int		i;
+	char	*destcpy;
+	char	*srccpy;
 
-	i = 0;
-	actual = str;
-	str[0] = '\0';
-	while (*msg)
-		*actual++ = *msg++;
-	while (subject && *subject)
-		*actual++ = *subject++;
-	*actual++ = '\n';
-	*actual = '\0';
-	while (str[i])
-		write(1, &str[i++], 1);
+	destcpy = (char *)dst + len - 1;
+	srccpy = (char *)src + len - 1;
+	if (!dst && !src)
+		return ((void *)0);
+	if (dst < src)
+	{
+		ft_memcpy(dst, src, len);
+		return (dst);
+	}
+	while (len > 0)
+	{
+		*destcpy-- = *srccpy--;
+		len--;
+	}
+	return (dst);
 }

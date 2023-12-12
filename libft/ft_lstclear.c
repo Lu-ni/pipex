@@ -1,33 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   error.c                                            :+:      :+:    :+:   */
+/*   ft_lstclear.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lnicolli <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/12/12 18:05:44 by lnicolli          #+#    #+#             */
-/*   Updated: 2023/12/12 18:05:46 by lnicolli         ###   ########.fr       */
+/*   Created: 2023/10/27 16:00:46 by lnicolli          #+#    #+#             */
+/*   Updated: 2023/10/30 13:04:46 by lnicolli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft/libft.h"
-#include <unistd.h>
+#include "libft.h"
+#include <stdlib.h>
 
-void	error(char *msg, char *subject)
+void	ft_lstclear(t_list **lst, void (*del)(void *))
 {
-	char	str[1000];
-	char	*actual;
-	int		i;
+	t_list	*next;
+	t_list	*actual;
 
-	i = 0;
-	actual = str;
-	str[0] = '\0';
-	while (*msg)
-		*actual++ = *msg++;
-	while (subject && *subject)
-		*actual++ = *subject++;
-	*actual++ = '\n';
-	*actual = '\0';
-	while (str[i])
-		write(1, &str[i++], 1);
+	actual = *lst;
+	while (actual)
+	{
+		next = actual->next;
+		ft_lstdelone(actual, del);
+		actual = next;
+	}
+	*lst = (t_list *)0;
 }

@@ -1,33 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   error.c                                            :+:      :+:    :+:   */
+/*   ft_lstadd_back.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lnicolli <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/12/12 18:05:44 by lnicolli          #+#    #+#             */
-/*   Updated: 2023/12/12 18:05:46 by lnicolli         ###   ########.fr       */
+/*   Created: 2023/10/27 15:27:51 by lnicolli          #+#    #+#             */
+/*   Updated: 2023/10/27 16:44:36 by lnicolli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft/libft.h"
-#include <unistd.h>
+#include "libft.h"
 
-void	error(char *msg, char *subject)
+void	ft_lstadd_back(t_list **lst, t_list *new)
 {
-	char	str[1000];
-	char	*actual;
-	int		i;
+	t_list	*list;
 
-	i = 0;
-	actual = str;
-	str[0] = '\0';
-	while (*msg)
-		*actual++ = *msg++;
-	while (subject && *subject)
-		*actual++ = *subject++;
-	*actual++ = '\n';
-	*actual = '\0';
-	while (str[i])
-		write(1, &str[i++], 1);
+	if (*lst)
+	{
+		list = ft_lstlast(*lst);
+		list->next = new;
+	}
+	else
+		*lst = new;
 }

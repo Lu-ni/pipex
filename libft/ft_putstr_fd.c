@@ -1,33 +1,19 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   error.c                                            :+:      :+:    :+:   */
+/*   ft_putstr_fd.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lnicolli <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/12/12 18:05:44 by lnicolli          #+#    #+#             */
-/*   Updated: 2023/12/12 18:05:46 by lnicolli         ###   ########.fr       */
+/*   Created: 2023/10/25 22:00:24 by lnicolli          #+#    #+#             */
+/*   Updated: 2023/10/25 22:03:17 by lnicolli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft/libft.h"
+#include "libft.h"
 #include <unistd.h>
 
-void	error(char *msg, char *subject)
+void	ft_putstr_fd(char *s, int fd)
 {
-	char	str[1000];
-	char	*actual;
-	int		i;
-
-	i = 0;
-	actual = str;
-	str[0] = '\0';
-	while (*msg)
-		*actual++ = *msg++;
-	while (subject && *subject)
-		*actual++ = *subject++;
-	*actual++ = '\n';
-	*actual = '\0';
-	while (str[i])
-		write(1, &str[i++], 1);
+	write(fd, s, ft_strlen(s));
 }

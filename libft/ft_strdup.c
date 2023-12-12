@@ -1,33 +1,35 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   error.c                                            :+:      :+:    :+:   */
+/*   ft_strdup.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lnicolli <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/12/12 18:05:44 by lnicolli          #+#    #+#             */
-/*   Updated: 2023/12/12 18:05:46 by lnicolli         ###   ########.fr       */
+/*   Created: 2023/10/24 17:48:05 by lnicolli          #+#    #+#             */
+/*   Updated: 2023/10/24 20:46:12 by lnicolli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft/libft.h"
-#include <unistd.h>
+#include "libft.h"
+#include <stdlib.h>
 
-void	error(char *msg, char *subject)
+char	*ft_strdup(const char *s1)
 {
-	char	str[1000];
-	char	*actual;
-	int		i;
+	char	*duplicate;
+	char	*duplicate_first;
+	char	*s1copy;
 
-	i = 0;
-	actual = str;
-	str[0] = '\0';
-	while (*msg)
-		*actual++ = *msg++;
-	while (subject && *subject)
-		*actual++ = *subject++;
-	*actual++ = '\n';
-	*actual = '\0';
-	while (str[i])
-		write(1, &str[i++], 1);
+	s1copy = (char *)s1;
+	duplicate = (char *)malloc(ft_strlen(s1) + 1);
+	if (!duplicate)
+		return ((char *)0);
+	duplicate_first = duplicate;
+	while (*s1copy)
+	{
+		*duplicate = *s1copy;
+		duplicate++;
+		s1copy++;
+	}
+	*duplicate = '\0';
+	return (duplicate_first);
 }

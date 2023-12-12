@@ -1,33 +1,33 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   error.c                                            :+:      :+:    :+:   */
+/*   ft_strrchr.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lnicolli <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/12/12 18:05:44 by lnicolli          #+#    #+#             */
-/*   Updated: 2023/12/12 18:05:46 by lnicolli         ###   ########.fr       */
+/*   Created: 2023/10/24 17:48:05 by lnicolli          #+#    #+#             */
+/*   Updated: 2023/10/24 17:49:09 by lnicolli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft/libft.h"
-#include <unistd.h>
+#include "libft.h"
 
-void	error(char *msg, char *subject)
+char	*ft_strrchr(const char *str, int c)
 {
-	char	str[1000];
-	char	*actual;
-	int		i;
+	char	*lastoccurence;
+	char	*strcpy;
 
-	i = 0;
-	actual = str;
-	str[0] = '\0';
-	while (*msg)
-		*actual++ = *msg++;
-	while (subject && *subject)
-		*actual++ = *subject++;
-	*actual++ = '\n';
-	*actual = '\0';
-	while (str[i])
-		write(1, &str[i++], 1);
+	lastoccurence = (char *)0;
+	strcpy = (char *)str;
+	while (*strcpy)
+	{
+		if (*strcpy == (char)c)
+			lastoccurence = strcpy;
+		strcpy++;
+	}
+	if ((char)c == '\0')
+		return (strcpy);
+	if (lastoccurence != (char *)0)
+		return (lastoccurence);
+	return ((char *)0);
 }

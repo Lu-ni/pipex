@@ -1,33 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   error.c                                            :+:      :+:    :+:   */
+/*   ft_calloc.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lnicolli <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/12/12 18:05:44 by lnicolli          #+#    #+#             */
-/*   Updated: 2023/12/12 18:05:46 by lnicolli         ###   ########.fr       */
+/*   Created: 2023/10/24 17:48:05 by lnicolli          #+#    #+#             */
+/*   Updated: 2023/10/24 20:24:18 by lnicolli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft/libft.h"
-#include <unistd.h>
+#include "libft.h"
+#include <stdlib.h>
 
-void	error(char *msg, char *subject)
+void	*ft_calloc(size_t count, size_t size)
 {
-	char	str[1000];
-	char	*actual;
-	int		i;
+	char	*mem;
+	int		totalbyte;
 
-	i = 0;
-	actual = str;
-	str[0] = '\0';
-	while (*msg)
-		*actual++ = *msg++;
-	while (subject && *subject)
-		*actual++ = *subject++;
-	*actual++ = '\n';
-	*actual = '\0';
-	while (str[i])
-		write(1, &str[i++], 1);
+	mem = (char *)malloc(count * size);
+	if (!mem)
+		return ((void *)0);
+	totalbyte = size * count;
+	while (totalbyte > 0)
+	{
+		mem[totalbyte - 1] = (char)0;
+		totalbyte--;
+	}
+	return ((void *)mem);
 }

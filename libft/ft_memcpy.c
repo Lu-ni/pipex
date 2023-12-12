@@ -1,33 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   error.c                                            :+:      :+:    :+:   */
+/*   ft_memcpy.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lnicolli <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/12/12 18:05:44 by lnicolli          #+#    #+#             */
-/*   Updated: 2023/12/12 18:05:46 by lnicolli         ###   ########.fr       */
+/*   Created: 2023/10/24 17:48:05 by lnicolli          #+#    #+#             */
+/*   Updated: 2023/10/24 19:16:47 by lnicolli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft/libft.h"
-#include <unistd.h>
+#include "libft.h"
 
-void	error(char *msg, char *subject)
+void	*ft_memcpy(void *dst, const void *src, size_t n)
 {
-	char	str[1000];
-	char	*actual;
-	int		i;
+	char	*destcpy;
+	char	*srccpy;
 
-	i = 0;
-	actual = str;
-	str[0] = '\0';
-	while (*msg)
-		*actual++ = *msg++;
-	while (subject && *subject)
-		*actual++ = *subject++;
-	*actual++ = '\n';
-	*actual = '\0';
-	while (str[i])
-		write(1, &str[i++], 1);
+	destcpy = (char *)dst;
+	srccpy = (char *)src;
+	if (!dst && !src)
+		return (dst);
+	while (n > 0)
+	{
+		*destcpy++ = *srccpy++;
+		n--;
+	}
+	return (dst);
 }

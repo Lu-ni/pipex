@@ -1,49 +1,42 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parser.c                                           :+:      :+:    :+:   */
+/*   ft_strtrim.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lnicolli <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/12/12 18:05:54 by lnicolli          #+#    #+#             */
-/*   Updated: 2023/12/12 18:05:57 by lnicolli         ###   ########.fr       */
+/*   Created: 2023/10/24 17:48:05 by lnicolli          #+#    #+#             */
+/*   Updated: 2023/10/24 21:51:50 by lnicolli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft/libft.h"
-#include "pipex.h"
+#include "libft.h"
 #include <stdlib.h>
 
-int	parser(int argc, char **argv, t_input *args)
+static int	ft_isinset(char c, char const *set)
 {
-	if (argc < 5)
-		return (1);
-	args->infile = argv[1];
-	args->outfile = argv[argc - 1];
+	while (*set)
+	{
+		if (*set == c)
+			return (1);
+		set++;
+	}
 	return (0);
 }
 
-char	**get_path(char *env[])
+char	*ft_strtrim(char const *s1, char const *set)
 {
-	char	**tmps;
-	char	*tmp;
+	char	*start;
 	int		i;
 
+	if (!*s1)
+		return (ft_strdup(""));
 	i = 0;
-	while (env[i] != NULL)
-	{
-		if (!ft_strncmp(env[i], "PATH=", 5))
-			break ;
+	while (s1[i] && ft_isinset(s1[i], set))
 		i++;
-	}
-	tmps = ft_split(&env[i][5], ':');
-	i = 0;
-	while (tmps[i])
-	{
-		tmp = tmps[i];
-		tmps[i] = ft_strjoin(tmp, "/");
-		free(tmp);
-		i++;
-	}
-	return (tmps);
+	start = (char *)&s1[i];
+	i = ft_strlen(s1) - 1;
+	while (s1[i] && ft_isinset(s1[i], set))
+		i--;
+	return (ft_substr(s1, start - s1, i + 1 - (start - s1)));
 }

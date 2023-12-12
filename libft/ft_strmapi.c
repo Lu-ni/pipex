@@ -1,33 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   error.c                                            :+:      :+:    :+:   */
+/*   ft_strmapi.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: lnicolli <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/12/12 18:05:44 by lnicolli          #+#    #+#             */
-/*   Updated: 2023/12/12 18:05:46 by lnicolli         ###   ########.fr       */
+/*   Created: 2023/10/25 21:31:46 by lnicolli          #+#    #+#             */
+/*   Updated: 2023/10/25 21:39:02 by lnicolli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft/libft.h"
-#include <unistd.h>
+#include "libft.h"
 
-void	error(char *msg, char *subject)
+char	*ft_strmapi(char const *s, char (*f)(unsigned int, char))
 {
-	char	str[1000];
-	char	*actual;
 	int		i;
+	char	*str;
 
 	i = 0;
-	actual = str;
-	str[0] = '\0';
-	while (*msg)
-		*actual++ = *msg++;
-	while (subject && *subject)
-		*actual++ = *subject++;
-	*actual++ = '\n';
-	*actual = '\0';
+	str = ft_strdup(s);
+	if (!str)
+		return (str);
 	while (str[i])
-		write(1, &str[i++], 1);
+	{
+		str[i] = f(i, str[i]);
+		i++;
+	}
+	return (str);
 }
