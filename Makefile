@@ -3,7 +3,7 @@ CC = cc
 CFLAGS = -g -Wextra -Werror -Wall 
 SRC = main.c parser.c cmd_utils.c error.c
 OBJ = $(SRC:.c=.o)
-LIBFT = libft/libft.a
+LIBFT = libft.a
 
 all: $(NAME)
 
@@ -14,7 +14,7 @@ $(OBJ): $(SRC)
 	$(CC) $(CFLAGS) -c $(SRC)
 
 $(LIBFT):
-	cd libft && make bonus && cd ../
+	cd libft && make bonus && cd ../ && cp libft/libft.a .
 
 clean:
 	rm -f $(OBJ)
