@@ -11,11 +11,11 @@
 #include <fcntl.h>
 #include <stdio.h>
 
-void close_pipe(int pipefd[10][2], int i_last)
+void close_pipe(int pipefd[10][2], t_input *input)
 {
 	int i;
 	i=0;
-	while (i<i_last)
+	while (i < input->i_last)
 	{
 		close(pipefd[i][0]);
 		close(pipefd[i][1]);
@@ -29,16 +29,15 @@ int main(int argc, char **argv, char *envp[])
 	t_input input;
 	int i_cmd;
 	pid_t pid;
-	char **cmd;
 
 	i_cmd = 0;
 	int i_first = 0;
-	int i_last = argc - 4;
+	input.i_last = argc - 4;
 	input.path = get_path(envp);
 	if(parser(argc, argv, &input))
 		exit(EXIT_FAILURE);
 
-	while (i_cmd < i_last)
+	while (i_cmd < input.i_last)
 	{
 		if (pipe(pipefd[i_cmd]) == -1)
 		{
@@ -48,9 +47,9 @@ int main(int argc, char **argv, char *envp[])
 		i_cmd++;
 	}
 	i_cmd = 0;
-	while(i_cmd <= i_last)
+	while(i_cmd <= input.i_last)
 	{
-		cmd = get_cmd(argv[i_cmd + 2],input.path);
+		input.cmd = get_cmd(argv[i_cmd + 2],input.path);
 		pid = fork();
 		if (pid == -1)
 		{
@@ -59,28 +58,16 @@ int main(int argc, char **argv, char *envp[])
 		}
 		if (pid == 0)
 		{
-			if (!cmd)
-			{
-				perror("command not found");
-				close_pipe(&pipefd[0], i_last);
-				exit(EXIT_FAILURE);
-			}
 			if (i_cmd == i_first)
-			{
-				cmd_first(&input, pipefd,i_cmd,i_last);
-			}
-			else if (i_cmd == i_last)
-			{
-				cmd_last(&input, pipefd,i_cmd,i_last);
-			}
+				cmd_first(&input, pipefd, i_cmd);
+			else if (i_cmd == input.i_last)
+				cmd_last(&input, pipefd, i_cmd);
 			else
-			{
-				cmd_mid(pipefd, i_cmd, i_last);
-			}
-			execve(cmd[0], cmd, envp);
+				cmd_mid(&input, pipefd, i_cmd);
+			execve(input.cmd[0], input.cmd, envp);
 		}
-		if(cmd)
-			free_cmd(cmd);
+		if(input.cmd)
+			free_cmd(input.cmd);
 		i_cmd ++;
 	}
 	// freeing and closing pipes
@@ -89,6 +76,6 @@ int main(int argc, char **argv, char *envp[])
 	while(input.path[i])
 		free(input.path[i++]);
 	free(input.path);
-	close_pipe(&pipefd[0], i_last);
+	close_pipe(&pipefd[0], &input);
 	return (0);
 }
