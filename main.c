@@ -38,9 +38,10 @@ int main(int argc, char **argv, char *envp[])
 	if(parser(argc, argv, &input))
 		exit(EXIT_FAILURE);
 
-	while ( i_cmd < i_last)
+	while (i_cmd < i_last)
 	{
-		if (pipe(pipefd[i_cmd]) == -1) {
+		if (pipe(pipefd[i_cmd]) == -1)
+		{
 			perror("pipe");
 			exit(EXIT_FAILURE);
 		}
@@ -50,11 +51,6 @@ int main(int argc, char **argv, char *envp[])
 	while(i_cmd <= i_last)
 	{
 		cmd = get_cmd(argv[i_cmd + 2],input.path);
-		if (!cmd)
-		{
-			perror("command not found");
-			exit(EXIT_FAILURE);
-		}
 		pid = fork();
 		if (pid == -1)
 		{
@@ -63,46 +59,36 @@ int main(int argc, char **argv, char *envp[])
 		}
 		if (pid == 0)
 		{
+			if (!cmd)
+			{
+				perror("command not found");
+				close_pipe(&pipefd[0], i_last);
+				exit(EXIT_FAILURE);
+			}
 			if (i_cmd == i_first)
 			{
-				int fd = open(input.infile, O_RDONLY);
-				if (fd < 0)
-				{
-					error("no such file or directory: ", input.infile);
-				}
-				else
-				{
-					dup2(fd, STDIN_FILENO);
-					dup2(pipefd[i_cmd][1], STDOUT_FILENO);
-				}
-				close_pipe(&pipefd[0], i_last);
+				cmd_first(&input, pipefd,i_cmd,i_last);
 			}
 			else if (i_cmd == i_last)
 			{
-				dup2(open(input.outfile, O_CREAT|O_WRONLY|O_TRUNC, S_IRUSR|S_IWUSR), STDOUT_FILENO);
-				dup2(pipefd[i_cmd - 1][0], STDIN_FILENO);
-				close_pipe(&pipefd[0], i_last);
+				cmd_last(&input, pipefd,i_cmd,i_last);
 			}
 			else
 			{
-				dup2(pipefd[i_cmd][1], STDOUT_FILENO);
-				dup2(pipefd[i_cmd - 1][0], STDIN_FILENO);
-				close_pipe(&pipefd[0], i_last);
+				cmd_mid(pipefd, i_cmd, i_last);
 			}
 			execve(cmd[0], cmd, envp);
 		}
-		int i = 0;
-		while(cmd[i])
-			free(cmd[i++]);
-		free(cmd);
+		if(cmd)
+			free_cmd(cmd);
 		i_cmd ++;
 	}
+	// freeing and closing pipes
 	int i = 0;
 	i = 0;
 	while(input.path[i])
 		free(input.path[i++]);
 	free(input.path);
 	close_pipe(&pipefd[0], i_last);
-	printf("testtttt\n");
 	return (0);
 }
