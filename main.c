@@ -6,20 +6,12 @@
 /*   By: lnicolli <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/12 18:03:35 by lnicolli          #+#    #+#             */
-/*   Updated: 2023/12/12 18:05:27 by lnicolli         ###   ########.fr       */
+/*   Updated: 2023/12/19 15:48:28 by lnicolli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft/libft.h"
 #include "pipex.h"
-#include <fcntl.h>
-#include <stdio.h>
 #include <stdlib.h>
-#include <sys/_types/_pid_t.h>
-#include <sys/_types/_s_ifmt.h>
-#include <sys/fcntl.h>
-#include <sys/unistd.h>
-#include <sys/wait.h>
 #include <unistd.h>
 
 void	close_pipe(int pipefd[10][2], t_input *input)
@@ -64,13 +56,24 @@ int	open_pid(void)
 	return (pid);
 }
 
+void	free_path(t_input *input)
+{
+	int		i;
+
+	i = 0;
+	while (input->path[i])
+		free(input->path[i++]);
+	free(input->path);
+}
+
 int	main(int argc, char **argv, char *envp[])
 {
 	int		pipefd[10][2];
 	t_input	input;
 	pid_t	pid;
-	int		i;
 
+	if (argc < 4)
+		return (0);
 	input.i_cmd = 0;
 	input.i_last = argc - 4;
 	input.path = get_path(envp);
@@ -85,10 +88,7 @@ int	main(int argc, char **argv, char *envp[])
 			free_cmd(input.cmd);
 		input.i_cmd++;
 	}
-	i = 0;
-	while (input.path[i])
-		free(input.path[i++]);
-	free(input.path);
 	close_pipe(&pipefd[0], &input);
+	free_path(&input);
 	return (0);
 }

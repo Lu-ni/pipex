@@ -16,6 +16,9 @@ $(OBJ): $(SRC)
 $(LIBFT):
 	cd libft && make bonus && cd ../ && cp libft/libft.a .
 
+%.o: %.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
 clean:
 	rm -f $(OBJ)
 

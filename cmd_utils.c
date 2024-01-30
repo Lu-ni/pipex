@@ -6,7 +6,7 @@
 /*   By: lnicolli <marvin@42lausanne.ch>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/12 17:58:44 by lnicolli          #+#    #+#             */
-/*   Updated: 2023/12/12 18:03:32 by lnicolli         ###   ########.fr       */
+/*   Updated: 2023/12/19 15:40:47 by lnicolli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@
 #include <fcntl.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <stdio.h>
 #include "pipex.h"
 
 void	free_cmd(char **cmd)
@@ -53,9 +52,12 @@ void	cmd_first(t_input *input, int pipefd[10][2])
 {
 	int	fd;
 
-	if (!input->cmd)
+	if (access(input->infile, R_OK) | !input->cmd)
 	{
-		error("command not found", NULL);
+		if (access(input->infile, R_OK))
+			error("no such file or directory: ", input->infile);
+		if (!input->cmd)
+			error("command not found", NULL);
 		close_pipe(&pipefd[0], input);
 		exit(EXIT_FAILURE);
 	}
@@ -63,6 +65,8 @@ void	cmd_first(t_input *input, int pipefd[10][2])
 	if (fd < 0)
 	{
 		error("no such file or directory: ", input->infile);
+		close_pipe(&pipefd[0], input);
+		exit(EXIT_FAILURE);
 	}
 	else
 	{
